@@ -4,37 +4,35 @@ CREATE DATABASE hr_db;
 USE hr_db;
 
 CREATE TABLE  roles (
-    id INT NOT NULL,
-    role_id INT NOT NULL ,
+    role_id INT NOT NULL,
     job_title VARCHAR(50) NOT NULL,
     dept_name VARCHAR (50) NOT NULL,
-    salary INT NOT NULL,  
-    current BOOLEAN,
-    PRIMARY KEY (dept_name)
+    starting_salary NUMERIC(6,2) NOT NULL,  
+    active_role BOOLEAN,
+    PRIMARY KEY (role_id)
 );
 
 CREATE TABLE   departments (
-    id INT NOT NULL,
     dept_id INT NOT NULL,
     dept_name VARCHAR(50) NOT NULL,
     manager VARCHAR(100) NOT NULL,
-    current BOOLEAN,
-    FOREIGN KEY (dept_name)
-    REFERENCES roles(dept_name)
-
+    active_dept BOOLEAN,
+    PRIMARY KEY (dept_id)
+  
 
 );
 
 CREATE TABLE  employees (
-    id INT NOT NULL,
     emp_id INT NOT NULL,
-    firstname VARCHAR (30) NOT NULL,
-    lastname VARCHAR (30) NOT NULL,
+    first_name VARCHAR (30) NOT NULL,
+    last_name VARCHAR (30) NOT NULL,
     job_title VARCHAR(40) NOT NULL,
     dept_name VARCHAR(50) NOT NULL,
-    current BOOLEAN,
-    FOREIGN KEY (dept_name)
-    REFERENCES departments(dept_name)
+    current_salary NUMERIC(6,2) NOT NULL,
+    emp_manager VARCHAR(50) NOT NULL,
+    active_emp BOOLEAN,
+    PRIMARY KEY (emp_id)
+    
 
 );
     

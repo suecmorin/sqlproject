@@ -1,20 +1,24 @@
-const fs = require('fs');
-const express = require('express');
-const path = require('path');
-//const api = require('./routes/index.js');
+
+
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
-//const { } = require('process');
-const { v4: uuidv4 } = require("uuid");
-const api = require('./db/server.js');
 
-const PORT = process.env.PORT || 3001;
-const app = express();
 
-// Middleware for parsing JSON and urlencoded form data//
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
+const db = mysql.createConnection(
+    {
+      host: 'localhost',
+      // MySQL username,
+      user: 'root',
+      // Add MySQL password
+      password: 'SUE4sql',
+      database: 'hr_db'
+    },
+    console.log(`Connected to the hr_db database.`)
+  );
+  db.connect((err,)=> {
+    if (err) throw err;
+    menu();
+  })
 
 //main menu
 function menu() {
@@ -23,39 +27,41 @@ inquirer
     {
       type: 'list',
       name: 'menu',
-      message: 'Welcome to the HR database. Please select one of the follwoing options',
+      message: 'Welcome to the HR database. Please select one of the following options',
       choices: ["DISPLAY All Depts.", "DISPLAY All Roles", "DISPLAY All Employees",  
       "ADD Dept.", "ADD Role", "ADD Employee", "UPDATE Employee", "Exit", ]
  }])
 
   .then((answer) => {
-  if (answer === "DISPLAY All Depts.") {
+  if (answer.menu === "DISPLAY All Depts.") {
     dispDept();
-  } else if (answer === "DISPLAY All Roles") {
+  } else if (answer.menu === "DISPLAY All Roles") {
     dispRole();
-  } else if (answer === "DISPLAY All Employees") {
+  } else if (answer.menu === "DISPLAY All Employees") {
     dispEmp();
-  } else if (answer === "ADD Dept.") {
+  } else if (answer.menu === "ADD Dept.") {
     addDept();
-  } else if (answer === "ADD Role") {
+  } else if (answer.menu === "ADD Role") {
     addRole();
-  } else if (answer === "ADD Employee") {
+  } else if (answer.menu === "ADD Employee") {
     addEmp();
-  }else if (answer === "UPDATE Employee") {
+  }else if (answer.menu === "UPDATE Employee") {
     updateEmp();
-  } else if (answer === "Exit") {
-    return;
+  } else if (answer.menu === "Exit") {
+    db.end();
+    console.log("Thank you for using the HR database");
   }
 });
 };
 
 //display all departments
   function dispDept() {
-    db.query('SELECT dept_id, dept_name, manager FROM departments WHERE current = TRUE', function (err, results) {
-    console.log(results);
+    db.query('SELECT dept_id, dept_name, manager FROM departments WHERE active_dept = TRUE', 
+    function (err, results) {
+    console.table(results);
+    console.log(" ");
     if (err){
-      results.status(400).json({error: err.message});
-      return;
+     console.log(err);
     }
     menu();
   });
@@ -63,12 +69,12 @@ inquirer
 
 //display all roles
   function dispRole() {
-    db.query('SELECT role_id, job_title, dept_name FROM roles WHERE current = TRUE', 
+    db.query('SELECT role_id, job_title, dept_name FROM roles WHERE active_role = TRUE ORDER BY role_id ASC', 
     function (err, results) {
-      console.log(results);
+      console.table(results);
+      console.log(" ");
       if (err){
-        results.status(400).json({error: err.message});
-        return;
+        console.log(err);
       }
     menu();
     });
@@ -76,12 +82,13 @@ inquirer
 
   //display all employees
   function dispEmp() {
-    db.query('SELECT  first_name, last_name, job_title FROM employees WHERE current = TRUE', 
+
+    db.query('SELECT  * FROM employees WHERE active_emp = TRUE ORDER BY emp_id ASC', 
     function (err, results) {
-      console.log(resuls);
+      console.table(results);
+      console.log(" ");
       if (err){
-        results.status(400).json({error: err.message});
-        return;
+        console.log(err);
       }
     menu();
     });
@@ -89,12 +96,12 @@ inquirer
 
   //add a new department
   function addDept() {
-    db_query('SELECT dept_id, dept_name, manager FROM departments WHERE current = TRUE', 
-    function (err, results) {
-      console.log(results);
+    const sqlcmd1 = `SELECT dept_id, dept_name, manager FROM departments WHERE active_dept = TRUE`
+    db.query(sqlcmd1, function (err, results) {
+      console.table(results);
+      console.log(" ");
       if (err){
-        results.status(400).json({error: err.message});
-        return;
+        console.log(err);
       } 
     });
     inquirer
@@ -102,7 +109,7 @@ inquirer
       {
         type: "input",
         name: "addDeptNo",
-        message: "PLease enter the new department number"
+        message: "PLease enter the new department number",
       },
       {
         type: "input",
@@ -116,13 +123,12 @@ inquirer
     }])
     .then((answer) => {
 
-    const uniqueId = uuidv4();
-    const sqlcmd = 'INSERT INTO departments (id, dept_id, dept_name, manager, current) VALUES (uniqueId, addDeptNo, addDeptName, addDeptMgr, TRUE)'
+   const sqlcmd = `INSERT INTO departments (dept_id, dept_name, manager, active_dept) VALUES ("${answer.addDeptNo}", "${answer.addDeptName}", "${answer.addDeptMgr}", TRUE)`
   db.query(sqlcmd, function (err, results) {
-  console.log(results);
+  console.log("Department successfully added");
+  
   if (err){
-    results.status(400).json({error: err.message});
-    return;
+    console.log(err);
   }
       menu();
   });
@@ -131,12 +137,12 @@ inquirer
 
   //add new role
 function addRole() {
-  db.query('SELECT role_id, job_title, dept_name FROM roles WHERE current = TRUE', 
+  db.query('SELECT role_id, job_title, dept_name, starting_salary FROM roles WHERE active_role = TRUE', 
     function (err, results) {
-      console.log(results);
+      console.table(results);
+      console.log(" ");
       if (err){
-        results.status(400).json({error: err.message});
-        return;
+        console.log(err);
       }
     });
       inquirer
@@ -162,13 +168,12 @@ function addRole() {
         message: "Please enter hourly wage", 
     }])
   .then ((answer) => {
-  const uniqueId = uuidv4();
-  const sqlcmd = 'INSERT INTO roles (id, role_id, job_title, dept_name,  salary, current) VALUES (uniqueId, addRoleId, addJobTitle, addDeptName, addSalary, TRUE)'
+  
+  const sqlcmd = `INSERT INTO roles (role_id, job_title, dept_name,  starting_salary, active_role) VALUES ("${answer.addRoleId}", "${answer.addJobTitle}", "${answer.addDeptName}", "${answer.addSalary}", TRUE)`
 db.query(sqlcmd, function (err, results) {
-  console.log(results);
+  console.table(results);
   if (err){
-    results.status(400).json({error: err.message});
-    return;
+    console.log(err)
   }
   menu();
 });
@@ -177,12 +182,11 @@ db.query(sqlcmd, function (err, results) {
 
 //add new employee
 function addEmp() {
-  db.query('SELECT first_name, last_name,  job_title, dept_name FROM employees WHERE current = TRUE', 
+  db.query('SELECT first_name, last_name,  job_title, dept_name, emp_manager FROM employees WHERE active_emp = TRUE ORDER BY emp_id ASC', 
   function (err, results) {
-    console.log(results);
+    console.table(results);
     if (err){
-      results.status(400).json({error: err.message});
-      return;
+     console.log(err)
     }
   });
     inquirer
@@ -211,15 +215,24 @@ function addEmp() {
       type: "input",
       name: "addDeptName",
       message: "Please enter department name",
+    },
+    {
+      type: "input",
+      name: "addempMgr",
+      message: "Please enter manager name ",
+    },
+    {
+      type: "input",
+      name: "addnewSalary",
+      message: "Please enter starting salary",
   }])
   .then ((answer) => {
-const uniqueId = uuidv4();
-const sqlcmd = 'INSERT INTO employees (id, emp_id, first_name, last_name, job_title, dept_name, current) VALUES (uniqueId, addempId, addJobTitle, addFirstName, addLastNmae, addDeptName, TRUE)'
+
+const sqlcmd = `INSERT INTO employees (emp_id, first_name, last_name, job_title, dept_name, current_salary, emp_manager, active_emp) VALUES ("${answer.addEmpid}","${answer.addFirstName}", "${answer.addLastName}", "${answer.addJpbTitle}", "${answer.addDeptName}", "${answer.addnewSalary}", "${answer.addempMgr}", TRUE)`
 db.query(sqlcmd, function (err, results) {
-console.log(results);
+console.table(results);
 if (err){
-  results.status(400).json({error: err.message});
-  return;
+  console.log(err)
 }
 menu();
 });
@@ -228,12 +241,11 @@ menu();
 
 //update employee role
 function updateEmp() {
-db.query('SELECT emp_id, first_name, last_name,  job_title, dept_name WHERE current = TRUE FROM employees', 
+db.query('SELECT emp_id, first_name, last_name,  job_title, dept_name FROM employees WHERE active_emp = TRUE ORDER BY emp_id ASC', 
 function (err, results) {
-  console.log(results);
+  console.table(results);
   if (err){
-    results.status(400).json({error: err.message});
-    return;
+    console.log(err)
   }
 }
 );
@@ -242,31 +254,36 @@ function (err, results) {
   {
     type: "input",
     name: "empIdtoUpdate",
-    message: "Please enter the employee number of the employee you wish to update"
+    message: "Please enter the id number of the employee you wish to update",
+  },
+  {
+    type: "input",
+    name: "newJob",
+    message: "Please enter the employee's new job title",
   },
   {
   type: "input",
-  name: "newJob",
-  message: "Please enter the employee's new job title"
+  name: "newDept",
+  message: "Please enter the employee's new department",
+  }, 
+  {
+    type: "input",
+  name: "newSalary",
+  message: "Please enter the employee's new hourly salary",
+
   }])
   .then((answer) => {
-const sqlcmd = 'UPDATE employees SET job_title = "newJob" WHERE emp_id = "empIdtoUpdate"';
+ 
+const sqlcmd = `UPDATE employees SET job_title = "${answer.newJob}" WHERE emp_id = "${answer.empIdtoUpdate}"`;
 db.query(sqlcmd, function (err, results) {
-console.log(results);
+
+(err, results) => {
 if (err){
-results.status(400).json({error: err.message});
-return;
-}
+  console.log(err);
+} else console.log("Employee Updated");
 menu();
 });
 });
 };
-app.use((req, res) => {
-  res.status(404).end();
-});
-
-app.listen(PORT, () => {
-    console.log(`App listening at http://localhost:${PORT} 🚀`)
-  });
 
  
