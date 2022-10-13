@@ -1,0 +1,7 @@
+npm init {
+  "name": "sqlproject",
+  "lockfileVersion": 2,
+  "requires": true,
+  "packages": {}
+}
+inde
