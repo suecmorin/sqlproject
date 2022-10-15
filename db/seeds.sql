@@ -1,45 +1,48 @@
 USE hr_db;
-INSERT INTO roles (role_id, job_title, dept_name, starting_salary, active_role)
-VALUES (3, "Salesfloor Team Member", "Hardlines", 15, TRUE),
-(4, "Backroom Team Member", "Backroom", 15, TRUE),
-(5, "Fulfillment Team Member", "Fulfillment", 15, TRUE),
-(6, "Cashier", "Guest Services", 15, TRUE),
-(7, "Salesfloor Team Member", "Softlines", 15, TRUE),
-(8, "Salesfloor Team Member", "Grocery", 15, TRUE),
-(9, "Starbucks Team Member", "Starbucks", 15, TRUE),
-(10, "HR Team Member", "Human Resources", 15, TRUE),
-(11, "Team Leader", "HardlinesTL", 20, TRUE),
-(12, "Team Leader", "SoftlinesTL", 20, TRUE),
-(13, "Team Leader", "GroceryTL", 20, TRUE),
-(14, "Team Leader", "Guest ServicesTL", 20, TRUE),
-(15, "Team Leader", "StarbucksTL", 21, TRUE),
-(16, "Team Leader", "FulfillmentTL", 20, TRUE);
+INSERT INTO roles (role_id, job_title, dept_name, dept_id, starting_salary, active_role)
+VALUES (3, "Salesfloor Team Member", "Hardlines", 10,  15, TRUE),
+(4, "Backroom Team Member", "Backroom", 30, 15, TRUE),
+(5, "Fulfillment Team Member", "Fulfillment", 40, 15, TRUE),
+(6, "Cashier", "Guest Services", 60, 15, TRUE),
+(7, "Salesfloor Team Member", "Softlines", 20,  15, TRUE),
+(8, "Salesfloor Team Member", "Grocery", 50, 15, TRUE),
+(9, "Starbucks Team Member", "Starbucks", 70,  15, TRUE),
+(10, "HR Team Member", "Human Resources", 80, 15, TRUE),
+(11, "Team Leader", "Hardlines", 10, 20, TRUE),
+(12, "Team Leader", "Softlines", 20, 20, TRUE),
+(13, "Team Leader", "Grocery", 50, 20, TRUE),
+(14, "Team Leader", "Guest Services", 60, 20, TRUE),
+(15, "Team Leader", "Starbucks", 70, 21, TRUE),
+(16, "Team Leader", "Fulfillment", 40, 20, TRUE),
+(17, "Team Leader", "Backroom", 30, 20, TRUE);
 
 
-INSERT INTO departments  (dept_id, dept_name, manager, active_dept)
-VALUES (10, "Hardlines", "John Threshold", TRUE),
-(20, "Softlines", "Jane Day", TRUE),
-(30, "Backroom", "Joyce Closet", TRUE),
-(40, "Fulfillment", "Jay Shipper", TRUE),
-(50, "Grocery", "Janet Pillsbury", TRUE),
-(60, "Guest Services", "James Guest", TRUE),
-(70, "Starbucks", "Joan Java", TRUE);
+INSERT INTO departments  (dept_id, dept_name, active_dept)
+VALUES (10, "Hardlines",  TRUE),
+(20, "Softlines", TRUE),
+(30, "Backroom", TRUE),
+(40, "Fulfillment",  TRUE),
+(50, "Grocery",  TRUE),
+(60, "Guest Services",  TRUE),
+(70, "Starbucks",  TRUE),
+(80, "Human Resources", TRUE);
 
-INSERT INTO employees (emp_id, first_name, last_name, job_title, dept_name, current_salary, emp_manager, active_emp)
-VALUES (123, "Alex", "Jones", "Salesfloor Team Member", "Hardlines", 15.00, "John Threshold", TRUE),
-(321, "Alexa", "Jonas", "Salesfloor Team Member", "Hardlines", 15.25, "John Threshold", TRUE),
-(231, "Alex", "Jones Jr", "Salesfloor Team Member", "Hardlines", 15.00, "John Threshold",  TRUE),
-(124, "Alan", "Janson", "Salesfloor Team Member", "Softlines", 16.00, "Jane Day", TRUE),
-(125, "Alana", "Jynx", "Salesfloor Team Member", "Softlines", 15.50, "Jane Day", TRUE),
-(162, "Abe", "James", "Fulfillment Team Member", "Fulfillment", 15.35, "Jay Shipper", TRUE),
-(4323, "Asa", "Jones", "Salesfloor Team Member", "Grocery", 15.00, "Janet Pillsbury", TRUE),
-(7123, "Abram", "Jos", "Cashier", "Guest Services", 15.00, "James Guest", TRUE),
-(193, "Alex", "Jones", "Cashier", "Guest Services", 15.00, "james Guest", TRUE),
-(103, "Alecia", "Jonas", "Starbucks Team Member", "Starbucks", 15.00, "Jpan Java", TRUE),
-(3045, "Ale", "Juice", "Team Leader", "Hardlines", 20.00, "Hardlines ETL", TRUE),
-(33456, "Al", "Jibs", "Team Leader", "Softlines", 23.00, "Softlines ETL", TRUE),
-(2134,"Aba", "Jensen", "Backroom Team Member", "Backroom", 21.45, "Hardlines ETL",  TRUE),
-(890, "Ada", "Jingor", "Team Leader", "Guest Services", 20.00, "Guest Services ETL", TRUE),
-(556, "Adrian", "Jamesson", "Team Leader", "Starbucks", 21.35, "Guest Services ETL", TRUE),
-(1556, "Adrianne", "Jamessoni", "Team Leader", "Fulfillment", 20.15, "HArdlines ETL",  TRUE);
-
+INSERT INTO employees (emp_id, first_name, last_name, role_id, job_title, dept_name, current_salary, emp_man_id, active_emp)
+VALUES (123, "Alex", "Jones", 3, "Salesfloor Team Member", "Hardlines", 15.00, 3045, TRUE),
+(321, "Alexa", "Jonas", 3, "Salesfloor Team Member", "Hardlines", 15.25, 3045, TRUE),
+(231, "Alex", "Jones Jr", 3,  "Salesfloor Team Member", "Hardlines", 15.00, 3045,  TRUE),
+(124, "Alan", "Janson", 7, "Salesfloor Team Member", "Softlines", 16.00, 33456, TRUE),
+(125, "Alana", "Jynx", 7, "Salesfloor Team Member", "Softlines", 15.50, 33456, TRUE),
+(162, "Abe", "James", 5,  "Fulfillment Team Member", "Fulfillment", 15.35, 1556, TRUE),
+(4323, "Asa", "Jones", 8, "Salesfloor Team Member", "Grocery", 15.00, 3457, TRUE),
+(7123, "Abram", "Jos", 6, "Cashier", "Guest Services", 15.00, 890, TRUE),
+(193, "Alex", "Jones", 6, "Cashier", "Guest Services", 15.00, 890, TRUE),
+(103, "Alecia", "Jonas", 9,  "Starbucks Team Member", "Starbucks", 15.00, 556, TRUE),
+(3045, "John", "Threshold", 11, "Team Leader", "Hardlines", 20.00, NULL , TRUE),
+(33456, "Jane", "Day",  12, "Team Leader", "Softlines", 23.00, NULL , TRUE),
+(2134,"Aba", "Jensen", 4, "Backroom Team Member", "Backroom", 21.45, NULL,  TRUE),
+(890, "James", "Guest", 14,  "Team Leader", "Guest Services", 20.00, NULL, TRUE),
+(556, "Joan", "Java", 15, "Team Leader", "Starbucks", 21.35, NULL, TRUE),
+(1556, "Jay", "Shipper", 16,  "Team Leader", "Fulfillment", 20.15, NULL,  TRUE),
+(2245, "Joyce", "Closet", 17, "Team Leader", "Backroom", 20.00, NULL, TRUE),
+(3457, "Janet", "Pillsbury", 13, "Team Leader", "Grocery", 20.00, NULL, TRUE);

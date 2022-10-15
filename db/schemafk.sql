@@ -29,8 +29,7 @@ CREATE TABLE  employees (
     dept_name VARCHAR(50) NOT NULL,
     current_salary NUMERIC(6,2) NOT NULL,
     emp_man_id INT,
-    active_emp BOOLEAN,
-    PRIMARY KEY (emp_id)
+    active_emp BOOLEAN
 );
 
 
