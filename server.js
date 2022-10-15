@@ -30,7 +30,7 @@ inquirer
       name: 'menu',
       message: 'Welcome to the HR database. Please select one of the following options',
       choices: ["DISPLAY All Depts.", "DISPLAY All Roles", "DISPLAY All Employees",  
-      "ADD Dept.", "ADD Role", "ADD Employee", "UPDATE Employee", "Exit", ]
+      "ADD Dept.", "ADD Role", "ADD Employee", "UPDATE Employee", "DELETE Employee", "Exit", ]
  }])
 
   .then((answer) => {
@@ -48,7 +48,7 @@ inquirer
     addEmp();
   }else if (answer.menu === "UPDATE Employee") {
     updateEmp();
-  } else if (answer.menu) === "DELETE Employee") {
+  } else if (answer.menu === "DELETE Employee") {
     deleteEmp();  
   } else if (answer.menu === "Exit") {
     db.end();
@@ -86,7 +86,7 @@ inquirer
   //display all employees
   function dispEmp() {
 
-    db.query('SELECT  * FROM employees WHERE active_emp = TRUE ORDER BY emp_id ASC', 
+    db.query('SELECT  emp_id, first_name, last_name, role_id, job_title, dept_name, current_salary, emp_man_id FROM employees WHERE active_emp = TRUE ORDER BY emp_id ASC', 
     function (err, results) {
       console.table(results);
       console.log(" ");
@@ -307,7 +307,7 @@ menu();
 
 //delete employee
 function deleteEmp() {
-db.query('SELECT  * FROM employees WHERE active_emp = TRUE ORDER BY emp_id ASC', 
+db.query('SELECT   emp_id, first_name, last_name, role_id, job_title, dept_name, current_salary, emp_man_id FROM employees WHERE active_emp = TRUE ORDER BY emp_id ASC', 
     function (err, results) {
       console.table(results);
       console.log(" ");
@@ -323,7 +323,7 @@ db.query('SELECT  * FROM employees WHERE active_emp = TRUE ORDER BY emp_id ASC',
           message: "Please enter the id number of the employee you wish to delete",
         }])
         .then ((answer) => {
-      const sqlcmd = `UPDATE employees SET active_emp = 'FALSE' WHERE emp_id = "${answer.empIdtoUpdate}"`;
+      const sqlcmd = `UPDATE employees SET active_emp = '0' WHERE emp_id = "${answer.empIdtoUpdate}"`;
       db.query(sqlcmd, function (err, results) {
 
         (err, results) => {
