@@ -11,3 +11,4 @@ INSTALLATION
 This app has no front end and must be run with node.
 
 SCREENSHOT
+https://drive.google.com/file/d/1FoCZZ444tsvQ-AwpWLS5q4E0yegB1g63/view
